@@ -14,10 +14,10 @@ namespace Markdown
 		    return ReplaceMdTagsToHtml(markdown, tags);
 		}
 
-	    private static List<HtmlTag> GetOrderedTagsList(string markdown)
+	    private static List<Tag> GetOrderedTagsList(string markdown)
 	    {
-	        var openingTags = new Stack<HtmlTag>();
-	        var tags = new List<HtmlTag>();
+	        var openingTags = new Stack<Tag>();
+	        var tags = new List<Tag>();
 	        for (var i = 0; i < markdown.Length; i++)
 	        {
 	            // ...
@@ -25,7 +25,7 @@ namespace Markdown
 	        return tags.OrderBy(a => a.Index).ToList();
 	    }
 
-	    private static string ReplaceMdTagsToHtml(string markdown, List<HtmlTag> orderedTags)
+	    private static string ReplaceMdTagsToHtml(string markdown, List<Tag> orderedTags)
 	    {
             var result = new StringBuilder();
             // ...

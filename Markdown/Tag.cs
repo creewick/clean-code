@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Markdown
 {
-    public class HtmlTag
+    public class Tag
     {
         public readonly int Index;
         public static readonly string MDName;
@@ -17,13 +17,18 @@ namespace Markdown
             return false;
         }
 
-        public static bool IsCLoseTag(string text, int index)
+        public static bool IsCloseTag(string text, int index)
         {
             return false;
         }
+
+        public static string ReplaceTag(string text)
+        {
+            return text;
+        }
     }
 
-    public class ItalicTag : HtmlTag
+    public class ItalicTag : Tag
     {
         public new readonly string MDName = "_";
         public new readonly string HtmlName = "em";
