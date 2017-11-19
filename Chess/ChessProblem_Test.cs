@@ -12,7 +12,7 @@ namespace Chess
 			var board = File.ReadAllLines(filename);
 			ChessProblem.LoadFrom(board);
 			var expectedAnswer = File.ReadAllText(Path.ChangeExtension(filename, ".ans")).Trim();
-			ChessProblem.CalculateChessStatus();
+			ChessProblem.CalculateChessStatus(PieceColor.White);
 			Assert.AreEqual(expectedAnswer, ChessProblem.ChessStatus.ToString().ToLower(), "Failed test " + filename);
 		}
 
@@ -31,11 +31,11 @@ namespace Chess
 				"        ",
 			};
 			ChessProblem.LoadFrom(board);
-			ChessProblem.CalculateChessStatus();
+			ChessProblem.CalculateChessStatus(PieceColor.White);
 			Assert.AreEqual(ChessStatus.Check, ChessProblem.ChessStatus);
 			
 			// Now check that internal board modifictions during the first call do not change answer
-			ChessProblem.CalculateChessStatus();
+			ChessProblem.CalculateChessStatus(PieceColor.White);
 			Assert.AreEqual(ChessStatus.Check, ChessProblem.ChessStatus);
 		}
 
