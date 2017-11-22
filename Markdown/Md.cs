@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FluentAssertions;
-using NUnit.Framework;
-using NUnit.Framework.Constraints;
 
 namespace Markdown
 {
@@ -68,7 +64,7 @@ namespace Markdown
 	        return stack.Count > 0 && stack.Peek().Markdown == tag.Markdown;
 	    }
 
-        private static readonly Dictionary<string, List<string>> tags = new Dictionary<string, List<string>>
+        private static readonly Dictionary<string, List<string>> AllTags = new Dictionary<string, List<string>>
         {
             { "__", new List<string> {"<strong>", "</strong>" }},
             { "_", new List<string> {"<em>", "</em>" }}
@@ -76,9 +72,9 @@ namespace Markdown
 
         private static Tag FindTag(string text, int index)
         {
-            foreach (var tag in tags.Keys)
+            foreach (var tag in AllTags.Keys)
 	            if (text.SubstringMatch(index, tag))
-                    return new Tag(index, tag, tags[tag][0], tags[tag][1]);
+                    return new Tag(index, tag, AllTags[tag][0], AllTags[tag][1]);
 	        return null;
 	    }
 
@@ -105,82 +101,4 @@ namespace Markdown
                    text.Substring(index, expected.Length) == expected;
         }
     }
-
-    public class Tag
-    {
-        public readonly int Index;
-        public readonly string Markdown;
-        public readonly string HtmlOpen;
-        public readonly string HtmlClose;
-        public bool IsOpen;
-
-        public Tag(int index, string markdown, string htmlOpen, string htmlClose)
-        {
-            Index = index;
-            Markdown = markdown;
-            HtmlOpen = htmlOpen;
-            HtmlClose = htmlClose;
-            IsOpen = true;
-        }
-    }
-
-	[TestFixture]
-	public class Md_ShouldRender
-	{
-	    [Test]
-	    public void Simple_em()
-	    {
-	        var result = Md.RenderToHtml("_abc_");
-	        result.Should().Be("<em>abc</em>");
-	    }
-
-	    [Test]
-	    public void Simple_strong()
-	    {
-	        var result = Md.RenderToHtml("__abc__");
-	        result.Should().Be("<strong>abc</strong>");
-	    }
-
-	    [Test]
-	    public void SpaceAfterOpenTag_Ignore()
-	    {
-	        var result = Md.RenderToHtml("_ abc_");
-	        result.Should().Be("_ abc_");
-	    }
-
-	    [Test]
-	    public void SpaceBeforeCloseTag_Ignore()
-	    {
-	        var result = Md.RenderToHtml("_abc _");
-	        result.Should().Be("_abc _");
-	    }
-
-	    [Test]
-	    public void EmInsideStrong()
-	    {
-	        var result = Md.RenderToHtml("__a _b_ c__");
-	        result.Should().Be("<strong>a <em>b</em> c</strong>");
-        }
-
-	    [Test]
-	    public void StrongInsideEm()
-	    {
-	        var result = Md.RenderToHtml("_a __b__ c_");
-	        result.Should().Be("<em>a <strong>b</strong> c</em>");
-        }
-
-	    [Test]
-	    public void EscapeSymbol()
-	    {
-	        var result = Md.RenderToHtml(@"\_a_");
-	        result.Should().Be(@"\_a_");
-        }
-
-	    [Test]
-	    public void TagsWithDigits_Ignore()
-	    {
-	        var result = Md.RenderToHtml("1_2__3__4_");
-	        result.Should().Be("1_2__3__4_");
-        }
-	}
 }
