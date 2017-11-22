@@ -45,17 +45,17 @@ namespace Markdown
 	    {
 	        var nextIndex = tag.Index + tag.Markdown.Length;
             return tag.Index > 0 && text[tag.Index - 1] != ' ' &&
-                    text[tag.Index - 1] != '\\' &&
-                    !char.IsDigit(text[tag.Index - 1]) &&
-                    !char.IsDigit(text[nextIndex]);
-	    }
+                   text[tag.Index - 1] != '\\' &&
+                   !char.IsDigit(text[tag.Index - 1]) &&
+                   (nextIndex >= text.Length || !char.IsDigit(text[nextIndex]));
+        }
 
 	    private static bool CorrectOpenTag(Tag tag, string text)
 	    {
 	        var nextIndex = tag.Index + tag.Markdown.Length;
 	        return nextIndex < text.Length && text[nextIndex] != ' ' &&
-                   text[tag.Index - 1] != '\\' &&
-	               !char.IsDigit(text[tag.Index - 1]) &&
+                   (tag.Index == 0 || text[tag.Index - 1] != '\\' &&
+	                                  !char.IsDigit(text[tag.Index - 1])) &&
 	               !char.IsDigit(text[nextIndex]);
         }
 
