@@ -43,20 +43,16 @@ namespace Markdown
 
 	    private static bool CorrectCloseTag(Tag tag, string text)
 	    {
-	        var nextIndex = tag.Index + tag.Markdown.Length;
-            return tag.Index > 0 && text[tag.Index - 1] != ' ' &&
-                   text[tag.Index - 1] != '\\' &&
-                   !char.IsDigit(text[tag.Index - 1]) &&
-                   (nextIndex >= text.Length || !char.IsDigit(text[nextIndex]));
+            return !text.IsPrevSpace(tag) &&
+                   !text.IsEscaped(tag) &&
+                   !text.IsDigitNear(tag);
         }
 
 	    private static bool CorrectOpenTag(Tag tag, string text)
 	    {
-	        var nextIndex = tag.Index + tag.Markdown.Length;
-	        return nextIndex < text.Length && text[nextIndex] != ' ' &&
-                   (tag.Index == 0 || text[tag.Index - 1] != '\\' &&
-	                                  !char.IsDigit(text[tag.Index - 1])) &&
-	               !char.IsDigit(text[nextIndex]);
+	        return !text.IsNextSpace(tag) &&
+                   !text.IsEscaped(tag) &&
+                   !text.IsDigitNear(tag);
         }
 
 	    private static bool EquivalentToLastTag(Stack<Tag> stack, Tag tag)
@@ -99,6 +95,29 @@ namespace Markdown
         {
             return index + expected.Length <= text.Length &&
                    text.Substring(index, expected.Length) == expected;
+        }
+
+        public static bool IsPrevSpace(this string text, Tag tag)
+        {
+            return tag.Index > 0 && text[tag.Index - 1] == ' ';
+        }
+
+        public static bool IsNextSpace(this string text, Tag tag)
+        {
+            var nextIndex = tag.Index + tag.Markdown.Length;
+            return nextIndex < text.Length && text[nextIndex] == ' ';
+        }
+
+        public static bool IsEscaped(this string text, Tag tag)
+        {
+            return tag.Index > 0 && text[tag.Index - 1] == '\\';
+        }
+
+        public static bool IsDigitNear(this string text, Tag tag)
+        {
+            var nextIndex = tag.Index + tag.Markdown.Length;
+            return ( tag.Index > 0 && char.IsDigit(text[tag.Index - 1]) ) ||
+                   ( nextIndex < text.Length && char.IsDigit(text[nextIndex]) );
         }
     }
 }
