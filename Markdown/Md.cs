@@ -68,10 +68,10 @@ namespace Markdown
 
         private static Tag FindTag(string text, int index)
         {
-            foreach (var tag in AllTags.Keys)
-	            if (text.SubstringMatch(index, tag))
-                    return new Tag(index, tag, AllTags[tag][0], AllTags[tag][1]);
-	        return null;
+            return AllTags.Keys
+                .Where(key => text.SubstringMatch(index, key))
+                .Select(key => new Tag(index, key, AllTags[key][0], AllTags[key][1]))
+                .FirstOrDefault();
 	    }
 
 	    private static string ReplaceMdTagsToHtml(string markdown, List<Tag> orderedTags)
