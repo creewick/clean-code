@@ -56,10 +56,27 @@ namespace Markdown
         }
 
         [Test]
-        public void TagsWithDigits_Ignore()
+        public void DoubleEscapeSymbol_Ignore()
         {
-            var result = Md.RenderToHtml("1_2__3__4_");
-            result.Should().Be("1_2__3__4_");
+            var result = Md.RenderToHtml(@"\\_a_");
+            result.Should().Be(@"\<em>a</em>");
+        }
+
+        [TestCase("_ab2_", TestName = "CloseTagAfterDigit")]
+        [TestCase("_abc_2", TestName = "CloseTagBeforeDigit")]
+        [TestCase("1_abc_", TestName = "OpenTagAfterDigit")]
+        [TestCase("_1bc_", TestName = "OpenTagBeforeDigit")]
+        public void TagsWithDigits_Ignore(string input)
+        {
+            var result = Md.RenderToHtml(input);
+            result.Should().Be(input);
+        }
+
+        [Test]
+        public void TagsTogether()
+        {
+            var result = Md.RenderToHtml(@"___a_bc__");
+            result.Should().Be(@"<strong><em>a</em>bc</strong>");
         }
     }
 }

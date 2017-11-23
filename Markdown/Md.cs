@@ -80,7 +80,7 @@ namespace Markdown
 	        var index = 0;
 	        foreach (var tag in orderedTags)
 	        {
-	            result.Append(markdown.Substring(index, tag.Index - index));
+	            result.Append(markdown.EscapedSubstring(index, tag.Index - index));
 	            result.Append(tag.IsOpen ? tag.HtmlOpen : tag.HtmlClose);
 	            index = tag.Index + tag.Markdown.Length;
 	        }
@@ -91,6 +91,26 @@ namespace Markdown
 
     public static class StringExtensions
     {
+        public static string EscapedSubstring(this string text, int index, int length)
+        {
+            var result = new StringBuilder();
+            var i = index;
+            while (i < index + length)
+            {
+                if (text[i] == '\\' && i + 1 < text.Length && text[i + 1] == '\\')
+                {
+                    result.Append('\\');
+                    i += 2;
+                }
+                else
+                {
+                    result.Append(text[i]);
+                    i++;
+                }
+            }
+            return result.ToString();
+        }
+
         public static bool SubstringMatch(this string text, int index, string expected)
         {
             return index + expected.Length <= text.Length &&
@@ -110,7 +130,8 @@ namespace Markdown
 
         public static bool IsEscaped(this string text, Tag tag)
         {
-            return tag.Index > 0 && text[tag.Index - 1] == '\\';
+            return tag.Index > 0 && text[tag.Index - 1] == '\\' && 
+                (tag.Index < 2 || text[tag.Index - 2] != '\\');
         }
 
         public static bool IsDigitNear(this string text, Tag tag)

@@ -11,7 +11,7 @@ namespace Markdown
 	{
 		static void Main(string[] args)
 		{
-            Console.WriteLine(Md.RenderToHtml("_ a_"));
+            Console.WriteLine(Md.RenderToHtml(@"\\_a_"));
             Console.ReadLine();
 		}
 	}
