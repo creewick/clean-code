@@ -73,10 +73,17 @@ namespace Markdown
         }
 
         [Test]
-        public void TagsTogether()
+        public void TagsTogether_LongerFirst()
         {
             var result = Md.RenderToHtml(@"___a_bc__");
             result.Should().Be(@"<strong><em>a</em>bc</strong>");
+        }
+
+        [Test]
+        public void TagsTogether_ShorterFirst_Ignore()
+        {
+            var result = Md.RenderToHtml(@"___a__bc_");
+            result.Should().Be(@"___a__bc_");
         }
     }
 }
